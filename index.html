@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+  
+<title>Weather App</title>
+
+  
+<style>
+    
+body 
+{
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-image:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwInTZYML9OdZZqQo7Qpw1Qy3Gr9kTrRupPg&usqp=CAU) ; 
+     
+      background-size: cover;
+      background-position: center;
+      
+                
+    }
+
+ 
+   
+.container 
+{
+      text-align: center;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0);
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      font-size: 20px;
+      text-shadow: 1px 1px 18px darkgray;
+     
+    }
+
+   
+
+input 
+{
+      padding: 10px;
+      margin-right: 5px;
+      width: 60%;
+      border: 3px solid #000000;
+      border-radius: 45px;
+      box-shadow: 1px 5px 18px darkgray;
+      background: rgba(53, 52, 52, 0.438);
+  color: white;
+    }
+
+
+
+button {
+      padding: 10px;
+      background-color: #400568;
+      color: #ffffff;
+      border: 2px solid yellow;
+      cursor: pointer;
+      border-radius: 45px;
+      width: 35%;
+      box-shadow: 1px 5px 18px darkgray;
+    }
+
+    
+
+#weather-app {
+    
+      flex-direction: column;
+      align-items: center;
+      margin-top: -27px;
+    }
+
+
+    
+#current-weather,
+    #apparent-temperature,
+    #wind,
+    #description {
+      margin-bottom: 10px;
+    }
+
+
+
+#forecast 
+{
+      text-align: center;
+    }
+
+    
+
+h2 {
+      margin-top: 20px;
+      text-shadow: 1px 1px 18px darkgray;
+      color: white;
+    }
+
+h1{
+   color: white;
+   height: 50%;
+}
+    
+
+#forecast-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      
+    }
+
+    
+
+#forecast-table th,
+    #forecast-table td 
+{
+      padding: 10px;
+      
+    }
+
+    
+
+.weather-icon {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    
+
+tr{
+      text-shadow: 1px 0px 9px black;
+      color: #ffffff;
+    }
+#cityInput {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  
+</style>
+
+</head>
+
+
+<body>
+  
+<div class="background">
+    
+<div class="transbox">
+      
+<div class="container">
+        
+<h1>Weather App</h>
+        
+<input type="text" id="cityInput" placeholder="Enter city name"autocomplete="on">
+        
+<div id="suggestions"></div>
+        
+<button onclick="getWeather()">Get Weather</button>
+        
+<div id="weatherInfo" class="weather-info-container"></div>
+      
+</div>
+    
+</div>
+  
+</div>
+
+  
+<div id="weather-app">
+    
+<div id="current-weather"></div>
+    
+<div id="apparent-temperature"></div>
+    
+<div id="wind"></div>
+    
+<div id="description"></div>
+    
+<div id="forecast">
+
+      
+<h2>5-day weather forecast</h2>
+
+<table id="forecast-table">
+        
+<thead>
+          
+<tr>
+            
+<th>Day</th>
+            
+<th>Weather</th>
+            
+<th>High/Low</th>
+            
+<th>Humidity</th>
+            
+<th>Wind</th>
+            
+<th>Air Pressure</th>
+          
+</tr>
+        
+</thead>
+        
+<tbody id="forecast-data"></tbody>
+      
+</table>
+    
+</div>
+  
+</div>
+
+  
+<script>
+    // JavaScript code starts here
+    function getWeather() {
+      let city = document.getElementById('cityInput').value;
+      console.log(city);
+      if (city) {
+        const apiKey = '82005d27a116c2880c8f0fcb866998a0';
+        const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+        // Fetch current weather
+        fetch(currentWeatherUrl)
+          .then(response => response.json())
+          .then(data => {
+            // Update current weather display
+            document.getElementById('current-weather').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather Icon" class="weather-icon"> ${data.weather[0].main}`;
+            document.getElementById('apparent-temperature').textContent = `Feels Like: ${data.main.feels_like}°C`;
+            document.getElementById('wind').textContent = `Wind: ${data.wind.speed} m/s, ${data.wind.deg}°`;
+            document.getElementById('description').textContent = `Description: ${data.weather[0].description}`;
+
+            // Call updateBackground with the weather condition
+            updateBackground(data.weather[0].main);
+          })
+          .catch(error => {
+            console.error('Error fetching current weather data:', error);
+            document.getElementById('weatherInfo').innerHTML = 'Error fetching current weather data. Please try again.';
+          });
+
+        // Fetch 5-day forecast
+        fetch(forecastUrl)
+          .then(response => response.json())
+          .then(data => {
+            // Update forecast table
+            const forecastData = data.list.filter(item => item.dt_txt.includes('18:00:00'));
+            const forecastTableBody = document.getElementById('forecast-data');
+            forecastTableBody.innerHTML = '';
+
+            forecastData.forEach(item => {
+              const row = document.createElement('tr');
+
+              const dateCell = document.createElement('td');
+              dateCell.textContent = item.dt_txt.split(' ')[0];
+              row.appendChild(dateCell);
+
+              const weatherCell = document.createElement('td');
+              weatherCell.innerHTML = `<img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png" alt="Weather Icon" class="weather-icon">`;
+              row.appendChild(weatherCell);
+
+              const highLowCell = document.createElement('td');
+              highLowCell.textContent = `${item.main.temp_max}°C / ${item.main.temp_min}°C`;
+              row.appendChild(highLowCell);
+
+              const humidityCell = document.createElement('td');
+              humidityCell.textContent = `${item.main.humidity}%`;
+              row.appendChild(humidityCell);
+
+              const windCell = document.createElement('td');
+              windCell.textContent = `Speed: ${item.wind.speed} m/s, Direction: ${item.wind.deg}°`;
+              row.appendChild(windCell);
+
+              const airPressureCell = document.createElement('td');
+              airPressureCell.textContent = `${item.main.pressure} hPa`;
+              row.appendChild(airPressureCell);
+
+              forecastTableBody.appendChild(row);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching forecast data:', error);
+            document.getElementById('forecast-data').innerHTML = 'Error fetching forecast data. Please try again.';
+          });
+      }
+    }
+
+    // Sample array of places for demonstration purposes
+    const places = ['New York', 'London', 'Paris', 'Tokyo', 'Sydney', 'Berlin', 'Rome', 'Madrid'];
+
+    // Function to filter places based on user input
+    function filterPlaces(input) {
+      return places.filter(place => place.toLowerCase().startsWith(input.toLowerCase())).slice(0, 4);
+    }
+
+    // Function to update suggestions
+    function updateSuggestions() {
+      const input = document.getElementById('cityInput');
+      const suggestionsContainer = document.getElementById('suggestions');
+
+      // Clear previous suggestions
+      suggestionsContainer.innerHTML = '';
+
+      // Get filtered suggestions based on user input
+      const filteredPlaces = filterPlaces(input.value);
+
+      // Display suggestions
+      filteredPlaces.forEach(place => {
+        const suggestionItem = document.createElement('div');
+        suggestionItem.textContent = place;
+        suggestionItem.addEventListener('click', () => {
+          input.value = place;
+          suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+        });
+        suggestionsContainer.appendChild(suggestionItem);
+      });
+    }
+
+    // Function to update background based on weather condition
+    function updateBackground(weatherCondition) {
+      const body = document.body;
+
+      // Map weather conditions to corresponding GIF URLs
+      const gifMap = {
+        'Clear': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAJm-2P_LlrxDx3o8k15AtvWtUo-xyNaALMQ&usqp=CAU")',
+        'Clouds': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-jODtlZTfeHyweaA3vplq2Lg2nmExpUNGLA&usqp=CAU")',
+        'Rain': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwcdlprWOrt2gQbRUsjr3GoNZbscEw4rHoHA&usqp=CAU")',
+        'Snow': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbbX4nOZ3d-r5Vblk2TK8qkVUIBS-mxfLbog&usqp=CAU")',
+        'Thunderstorm': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzdEzdEcg4euwHSnn9rNzSGxDoib5QmQdwnQ&usqp=CAU")',
+        'Mist': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHtN-poQFB3grvmz1Y3AiHPVeBwy8DazKSJQ&usqp=CAU")',
+        'Fog': 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTbXLT1f4kyH6a-NC5Akr-Owke0SZj300fpQ&usqp=CAU")',
+        'Haze': 'url("https://www.google.com/imgres?imgurl=https%3A%2F%2Fi.gifer.com%2F7Jy5.gif&tbnid=9VSlPDqL33C0kM&vet=12ahUKEwiF1cP00euEAxWRbmwGHeiNABYQMygtegUIARDXAQ..i&imgrefurl=https%3A%2F%2Fgifer.com%2Fen%2F7Jy5&docid=N1qnOgAwUafA9M&w=750&h=550&q=haze%20weather%20%20background%20gif&client=firefox-b-d&ved=2ahUKEwiF1cP00euEAxWRbmwGHeiNABYQMygtegUIARDXAQ")',
+
+        // Add more conditions as needed
+      };
+
+      // Set the background based on the weather condition
+      body.style.backgroundImage = gifMap[weatherCondition] || 'url("https://www.google.com/imgres?imgurl=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F8c%2Fd6%2F32%2F8cd632d1be81bb70020f2e54cacd02fd.gif&tbnid=_ND3u-Gx_48UVM&vet=12ahUKEwjj4_fU0uuEAxWScmwGHdNkCpMQMygvegUIARD3AQ..i&imgrefurl=https%3A%2F%2Fin.pinterest.com%2Fpin%2F535224736959639322%2F&docid=MIRXsSN-nB3ZVM&w=390&h=658&q=%20weather%20%20background%20gif&client=firefox-b-d&ved=2ahUKEwjj4_fU0uuEAxWScmwGHdNkCpMQMygvegUIARD3AQ")';
+    }
+
+    // Attach event listeners
+    document.getElementById('cityInput').addEventListener('input', updateSuggestions);
+    function displayCities(cities) {
+    const cityInput = document.getElementById('cityInput');
+    cityInput.setAttribute('list', 'cityOptions');
+
+    const datalist = document.createElement('datalist');
+    datalist.id = 'cityOptions';
+
+    cities.forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      datalist.appendChild(option);
+    });
+
+    // Remove existing datalist options before appending the new one
+    const existingDatalist = document.getElementById('cityOptions');
+    if (existingDatalist) {
+      existingDatalist.remove();
+    }
+
+    document.body.appendChild(datalist);
+  }
+
+  // Event listener for input changes
+  document.getElementById('cityInput').addEventListener('input', function() {
+    const query = this.value;
+    if (query.length > 2) { // Fetch cities when at least 3 characters are entered
+      fetchCities(query);
+    }
+  });
+  function fetchCities(query) {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+      .then(response => response.json())
+      .then(data => {
+        const cities = data.map(city => city.display_name);
+        displayCities(cities);
+      })
+      .catch(error => console.error('Error fetching cities:', error));
+  }
+
+  // Function to display autocomplete options
+  function displayCities(cities) {
+    const cityInput = document.getElementById('cityInput');
+    cityInput.setAttribute('list', 'cityOptions');
+
+    const datalist = document.createElement('datalist');
+    datalist.id = 'cityOptions';
+
+    cities.forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      datalist.appendChild(option);
+    });
+
+    // Remove existing datalist options before appending the new one
+    const existingDatalist = document.getElementById('cityOptions');
+    if (existingDatalist) {
+      existingDatalist.remove();
+    }
+
+    document.body.appendChild(datalist);
+  }
+
+  // Event listener for input changes
+  document.getElementById('cityInput').addEventListener('input', function() {
+    const query = this.value;
+    if (query.length > 2) { // Fetch cities when at least 3 characters are entered
+      fetchCities(query);
+    }
+  });
+  
+</script>
+
+</body>
+
+</html>
