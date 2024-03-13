@@ -263,12 +263,17 @@ tr{
             const forecastTableBody = document.getElementById('forecast-data');
             forecastTableBody.innerHTML = '';
 
-            forecastData.forEach(item => {
+             forecastData.forEach(item => {
               const row = document.createElement('tr');
 
-              const dateCell = document.createElement('td');
-              dateCell.textContent = item.dt_txt.split(' ')[0];
-              row.appendChild(dateCell);
+               const dayCell = document.createElement('td');
+        // Extract day from date format (assuming data.list is ordered by date)
+        const date = new Date(item.dt * 1000);
+        const options = {
+          weekday: 'long'
+        };
+        dayCell.textContent = new Intl.DateTimeFormat('en-IN', options).format(date);
+        row.appendChild(dayCell);
 
               const weatherCell = document.createElement('td');
               weatherCell.innerHTML = `<img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png" alt="Weather Icon" class="weather-icon">`;
